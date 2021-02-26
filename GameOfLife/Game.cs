@@ -10,17 +10,15 @@ namespace GameUtilities
 
         private Cell[] _currentState;
 
-        private List<Cell> _impactedCells;
+        private List<Cell> _impactedCells; //List of cells that will be impacted by the current tick
 
         public void SetInitialState(Cell[] cells)
         {
             _initialState = cells;
             _currentState = _initialState.ToArray();
-
-            _impactedCells = new List<Cell>(_currentState);
-            _includeOuterCells();
         }
 
+        //Add the cells surrounding the alive cells to the impacted list
         private void _includeOuterCells()
         {
             foreach(Cell cell in _currentState)
@@ -46,14 +44,18 @@ namespace GameUtilities
             }
         }
 
+        //Start ticks
         public void ProceedTicks(int noOfTicks)
         {
             for (int ticksCounter = 0; ticksCounter < noOfTicks; ticksCounter++)
             {
+                _impactedCells = new List<Cell>(_currentState);
+                _includeOuterCells();
                 _tick();
             }
         }
 
+        //To fetch the current state of cells in string format
         public string getCurrentState()
         {
             List<string> result = new List<string>();
@@ -80,6 +82,7 @@ namespace GameUtilities
             _currentState = newState.ToArray();            
         }
 
+        //Changes the cell state based on rules on each tick
         private Cell _doCellOperation(Cell cell)
         {
             Cell copiedCell = new Cell(cell);
@@ -96,6 +99,7 @@ namespace GameUtilities
             return copiedCell;
         }
 
+        //Returns the number of alive cells surrounding the cell passed as argument
         private int _getSurroundingAliveCellsCount(Cell cell)
         {
             int aliveCellCount = 0;
@@ -150,8 +154,10 @@ namespace GameUtilities
         }
     }
 
+    // Cell class
     public class Cell
     {
+        //Cell coordinates
         public int X { get; }
         public int Y { get; }
         public bool IsAlive { get; private set; }
@@ -170,6 +176,7 @@ namespace GameUtilities
             IsAlive = isAlive;
         }
 
+        //Copy constructor
         public Cell(Cell cell)
         {
             X = cell.X;
@@ -177,11 +184,13 @@ namespace GameUtilities
             IsAlive = cell.IsAlive;
         }
 
+        //To Kill a cell
         public void kill()
         {
             IsAlive = false;
         }
 
+        //To revive a cell
         public void resurrect()
         {
             IsAlive = true;
